@@ -84,7 +84,7 @@ def metrics(y_true, y_pred, category, category_dict):
 
 def data2gpu(batch, use_cuda):
     if use_cuda:
-        print(len(batch))
+        print(f"Currently, a batch has {len(batch)} ")
         batch_data = {
             'content': batch[0].cuda(),
             'content_masks': batch[1].cuda(),
