@@ -99,10 +99,12 @@ class MultiDomainFENDModel(torch.nn.Module):
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
+        print(inputs)
         masks = kwargs['content_masks']
         category = kwargs['category']
         # imgs = kwargs['img']
         emotion = kwargs['emotion']
+        print(emotion)
         metadata = kwargs['metadata']
         
         if self.emb_type == "bert":
