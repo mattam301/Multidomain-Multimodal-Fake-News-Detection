@@ -242,7 +242,7 @@ class Trainer():
             for step_n, batch in enumerate(train_data_iter):
                 print(len(batch))
                 batch_data = data2gpu(batch, self.use_cuda)
-                # print(batch_data)
+                print(batch_data)
                 label = batch_data['label']
                 category = batch_data['category']
 

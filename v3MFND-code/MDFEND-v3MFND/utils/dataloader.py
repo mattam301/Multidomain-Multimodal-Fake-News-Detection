@@ -136,13 +136,13 @@ class bert_data():
         for batch_idx, batch_data in enumerate(dataloader):
           content_token_ids, content_masks, labels, categories, emotion_tensor, metadata = batch_data
     
-          print(f"Batch {batch_idx + 1} information:")
-          print(f"Content Token IDs shape: {content_token_ids.shape}")
-          print(f"Content Masks shape: {content_masks.shape}")
-          print(f"Labels shape: {labels.shape}")
-          print(f"Categories shape: {categories.shape}")
-          print(f"Emotion Tensor shape: {emotion_tensor.shape}")
-          print(f"Metadata shape: {metadata.shape}")
+        #   print(f"Batch {batch_idx + 1} information:")
+        #   print(f"Content Token IDs shape: {content_token_ids.shape}")
+        #   print(f"Content Masks shape: {content_masks.shape}")
+        #   print(f"Labels shape: {labels.shape}")
+        #   print(f"Categories shape: {categories.shape}")
+        #   print(f"Emotion Tensor shape: {emotion_tensor.shape}")
+        #   print(f"Metadata shape: {metadata.shape}")
 
         return dataloader
 
