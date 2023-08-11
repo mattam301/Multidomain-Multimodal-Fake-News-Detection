@@ -11,7 +11,7 @@ import torch.nn as nn
 from torchsummary import summary   
 import torchvision.models as models
 
-
+ 
 
 class MultiDomainFENDModel(torch.nn.Module):
     def __init__(self, emb_dim, mlp_dims, bert, dropout, emb_type , type_fusion):
@@ -97,7 +97,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             self.classifier = MLP( 320, mlp_dims, dropout) #text + meta: mean, sum, weighted sum
     
     def forward(self, **kwargs):
-
+        print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
         masks = kwargs['content_masks']
         category = kwargs['category']

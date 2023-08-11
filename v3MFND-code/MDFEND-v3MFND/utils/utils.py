@@ -7,7 +7,7 @@ class Recorder():
         self.max = {'metric': 0}
         self.cur = {'metric': 0}
         self.maxindex = 0
-        self.curindex = 0
+        self.curindex = 0 
         self.early_step = early_step
 
     def add(self, x):
