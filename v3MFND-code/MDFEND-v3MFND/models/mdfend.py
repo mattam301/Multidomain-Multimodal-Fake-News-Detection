@@ -182,6 +182,7 @@ class Trainer():
                  mlp_dims,
                  bert,
                  use_cuda,
+                 with_emotion,
                  lr,
                  
                  dropout,
@@ -198,6 +199,7 @@ class Trainer():
                  epoches = 100, 
 
                  ):
+        self.with_emotion = with_emotion
         self.lr = lr
         self.weight_decay = weight_decay
         self.train_loader = train_loader
@@ -241,7 +243,7 @@ class Trainer():
 
             for step_n, batch in enumerate(train_data_iter):
                 print(len(batch))
-                batch_data = data2gpu(batch, self.use_cuda)
+                batch_data = data2gpu(batch, self.use_cuda, self.with_emotion)
                 print(batch_data)
                 label = batch_data['label']
                 category = batch_data['category']
@@ -283,7 +285,7 @@ class Trainer():
         data_iter = tqdm.tqdm(dataloader)
         for step_n, batch in enumerate(data_iter):
             with torch.no_grad():
-                batch_data = data2gpu(batch, self.use_cuda)
+                batch_data = data2gpu(batch, self.use_cuda, self.with_emotion)
                 batch_label = batch_data['label']
                 batch_category = batch_data['category']
                 batch_label_pred = self.model(**batch_data)

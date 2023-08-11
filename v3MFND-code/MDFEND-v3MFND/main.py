@@ -20,7 +20,7 @@ parser.add_argument('--emb_type', default='bert')
 parser.add_argument('--w2v_vocab_file', default='./pretrained_model/w2v/Tencent_AILab_Chinese_w2v_model.kv')
 parser.add_argument('--save_param_dir', default= './param_model')
 parser.add_argument('--type_fusion',type = int)
-
+parser.add_argument('--with_emotion', action="store_true",default=False,help="Using emotion data")
 args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
@@ -50,6 +50,7 @@ print('type_fusion: {}; lr: {}; model name: {}; emb_type: {}; batchsize: {}; epo
 config = {
         'type_fusion': args.type_fusion, 
         'use_cuda': True,
+        'with_emotion': True,
         'batchsize': args.batchsize,
         'max_len': args.max_len,
         'early_stop': args.early_stop,

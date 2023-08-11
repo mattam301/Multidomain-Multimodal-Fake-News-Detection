@@ -82,17 +82,28 @@ def metrics(y_true, y_pred, category, category_dict):
     return metrics_by_category
 
 
-def data2gpu(batch, use_cuda):
+def data2gpu(batch, use_cuda, with_emotion):
     if use_cuda:
-        print(f"Currently, a batch has {len(batch)} ")
-        batch_data = {
+        if with_emotion:
+            batch_data = {
+            'content': batch[0].cuda(),
+            'content_masks': batch[1].cuda(),
+            'label': batch[2].cuda(),
+            'category': batch[3].cuda(),
+            'emotion': batch[4].cuda,
+            # 'img': batch[4].cuda(), 
+            # 'metadata': batch[5].cuda()
+            'metadata': batch[5].cuda()
+            }
+        else:
+            batch_data = {
             'content': batch[0].cuda(),
             'content_masks': batch[1].cuda(),
             'label': batch[2].cuda(),
             'category': batch[3].cuda(),
             # 'img': batch[4].cuda(), 
             # 'metadata': batch[5].cuda()
-            'metadata': batch[4].cuda()
+            'metadata': batch[5].cuda()
             }
     else:
         batch_data = {
