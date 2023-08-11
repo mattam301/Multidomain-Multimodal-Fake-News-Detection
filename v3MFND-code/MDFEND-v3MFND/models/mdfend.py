@@ -95,13 +95,14 @@ class MultiDomainFENDModel(torch.nn.Module):
         if (self.type_fusion == 3):
             # self.classifier = MLP(640, mlp_dims, dropout) #text+meta:concat
             self.classifier = MLP( 320, mlp_dims, dropout) #text + meta: mean, sum, weighted sum
-    
+
     def forward(self, **kwargs):
-        print(f"dataloader's key features: {kwargs.keys()}")
+        #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
         masks = kwargs['content_masks']
         category = kwargs['category']
         # imgs = kwargs['img']
+        emotion = kwargs['emotion']
         metadata = kwargs['metadata']
         
         if self.emb_type == "bert":
@@ -168,7 +169,7 @@ class MultiDomainFENDModel(torch.nn.Module):
 
             ##fusion : sum
             shared_feature = torch.add(metadata ,shared_feature) ## img + text
-            
+        
    
         
         label_pred = self.classifier(shared_feature)
@@ -242,9 +243,9 @@ class Trainer():
             avg_loss = Averager()
 
             for step_n, batch in enumerate(train_data_iter):
-                print(len(batch))
+                #print(len(batch))
                 batch_data = data2gpu(batch, self.use_cuda, self.with_emotion)
-                print(batch_data)
+                #print(batch_data)
                 label = batch_data['label']
                 category = batch_data['category']
 
