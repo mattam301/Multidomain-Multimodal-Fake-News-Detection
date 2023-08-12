@@ -106,24 +106,22 @@ class MultiDomainFENDModel(torch.nn.Module):
         print(f"Cate's type: {type(category)}")
         # imgs = kwargs['img']
         emotion = kwargs['emotion']
-        #inputs = torch.cat((inputs, emotion), dim=0)
+        
         print(f"Emotion's type: {type(emotion)}")
         metadata = kwargs['metadata']
         print(f"Meta's type: {type(metadata)}")
-        # if inputs.device == emotion.device:
-        #     print("Both tensors are on the same device.")
-        # else:
-        #     print("Tensors are on different devices.")
+
         print("Inputs size:", inputs.size())
         print("Emotion size:", emotion.size())
 
-        concatenated_tensor = torch.cat((inputs, emotion), dim=1)
-        breakpoint()
+        #inputs = torch.cat((inputs, emotion), dim=1)
+        #breakpoint()
         if self.emb_type == "bert":
             init_feature = self.bert(inputs, attention_mask = masks)[0]
         elif self.emb_type == 'w2v':
             init_feature = inputs
-        
+        print("init feature after bert has size:", init_feature.size())
+        breakpoint()
         feature, _ = self.attention(init_feature, masks)
         idxs = torch.tensor([index for index in category]).view(-1, 1).cuda()
         domain_embedding = self.domain_embedder(idxs).squeeze(1)
