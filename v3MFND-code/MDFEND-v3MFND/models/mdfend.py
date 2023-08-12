@@ -110,7 +110,14 @@ class MultiDomainFENDModel(torch.nn.Module):
         print(f"Emotion's type: {type(emotion)}")
         metadata = kwargs['metadata']
         print(f"Meta's type: {type(metadata)}")
-        
+        # if inputs.device == emotion.device:
+        #     print("Both tensors are on the same device.")
+        # else:
+        #     print("Tensors are on different devices.")
+        print("Inputs size:", inputs.size())
+        print("Emotion size:", emotion.size())
+
+        concatenated_tensor = torch.cat((inputs, emotion), dim=1)
         breakpoint()
         if self.emb_type == "bert":
             init_feature = self.bert(inputs, attention_mask = masks)[0]
