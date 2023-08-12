@@ -104,6 +104,7 @@ class MultiDomainFENDModel(torch.nn.Module):
         category = kwargs['category']
         # imgs = kwargs['img']
         emotion = kwargs['emotion']
+        inputs = torch.cat((inputs, emotion), dim=0)
         print(emotion)
         metadata = kwargs['metadata']
         
