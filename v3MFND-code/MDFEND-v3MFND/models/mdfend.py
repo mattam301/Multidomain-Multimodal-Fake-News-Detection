@@ -59,6 +59,13 @@ class MultiDomainFENDModel(torch.nn.Module):
                                       nn.ReLU(), 
                                       nn.Dropout(p=0.4)
                                       )
+        
+        ## 18 -> 320
+        self.resize_emo =  nn.Sequential(nn.Linear(18, 320),
+                                        nn.BatchNorm1d(320),
+                                      nn.ReLU(), 
+                                      nn.Dropout(p=0.4)
+                                      )
         ## 4096 - 2742 - 320:
         self.resize_img2 =  nn.Sequential(nn.Linear(4096, 2742),
                                         nn.BatchNorm1d(2742),
@@ -96,7 +103,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             # self.classifier = MLP(640, mlp_dims, dropout) #text+meta:concat
             self.classifier = MLP( 320, mlp_dims, dropout) #text + meta: mean, sum, weighted sum
         if (self.type_fusion == 4):
-            self.classifier = MLP( 338, mlp_dims, dropout)
+            self.classifier = MLP( 640, mlp_dims, dropout) # text + emo: concat
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
@@ -184,9 +191,10 @@ class MultiDomainFENDModel(torch.nn.Module):
             shared_feature = torch.add(metadata ,shared_feature) ## img + text
         if (self.type_fusion == 4):
             shared_feature =  self.norm_text(shared_feature)
-            
+            emotion = self.resize_emo(emotion)
             ## write something here
-            shared_feature = torch.cat((shared_feature, emotion), dim=1)
+            #shared_feature = torch.cat((shared_feature, emotion), dim=1)
+            shared_feature = torch.cat((emotion ,shared_feature ), -1)
         
         label_pred = self.classifier(shared_feature)
         
