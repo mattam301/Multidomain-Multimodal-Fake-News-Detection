@@ -111,9 +111,9 @@ def data2gpu(batch, use_cuda, with_emotion):
             'content_masks': batch[1],
             'label': batch[2],
             'category': batch[3],
-            'img': batch[4], 
+            'emotion': batch[4], 
+            #'img': batch[4], 
             'metadata': batch[5]
-            # 'metadata': batch[4]
             }
     return batch_data
 

@@ -99,15 +99,19 @@ class MultiDomainFENDModel(torch.nn.Module):
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
-        print(inputs)
+        print(f"Inputs's type: {type(inputs)}")
         masks = kwargs['content_masks']
+        print(f"Mask's type: {type(masks)}")
         category = kwargs['category']
+        print(f"Cate's type: {type(category)}")
         # imgs = kwargs['img']
         emotion = kwargs['emotion']
-        inputs = torch.cat((inputs, emotion), dim=0)
-        print(emotion)
+        #inputs = torch.cat((inputs, emotion), dim=0)
+        print(f"Emotion's type: {type(emotion)}")
         metadata = kwargs['metadata']
+        print(f"Meta's type: {type(metadata)}")
         
+        breakpoint()
         if self.emb_type == "bert":
             init_feature = self.bert(inputs, attention_mask = masks)[0]
         elif self.emb_type == 'w2v':
