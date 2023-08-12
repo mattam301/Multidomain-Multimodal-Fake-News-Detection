@@ -142,7 +142,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             tmp_feature = self.expert[i](init_feature)
             shared_feature += (tmp_feature * gate_value[:, i].unsqueeze(1))
         print("shared feature after bert has size:", shared_feature.size())
-        breakpoint()
+        #breakpoint()
         # imgs_feature = imgs
         
         if (self.type_fusion == 0):
@@ -191,9 +191,13 @@ class MultiDomainFENDModel(torch.nn.Module):
             shared_feature = torch.add(metadata ,shared_feature) ## img + text
         if (self.type_fusion == 4):
             shared_feature =  self.norm_text(shared_feature)
+            #emotion = self.resize_emo(emotion)
+            # Convert the 'emotion' tensor to the data type expected by self.resize_emo
+            expected_dtype = self.resize_emo[0].weight.dtype
+            emotion = emotion.to(expected_dtype)
+    
+            # Resize the 'emotion' tensor using self.resize_emo
             emotion = self.resize_emo(emotion)
-            ## write something here
-            #shared_feature = torch.cat((shared_feature, emotion), dim=1)
             shared_feature = torch.cat((emotion ,shared_feature ), -1)
         
         label_pred = self.classifier(shared_feature)
