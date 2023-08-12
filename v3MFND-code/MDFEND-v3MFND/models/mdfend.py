@@ -120,8 +120,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             init_feature = self.bert(inputs, attention_mask = masks)[0]
         elif self.emb_type == 'w2v':
             init_feature = inputs
-        print("init feature after bert has size:", init_feature.size())
-        breakpoint()
+        
         feature, _ = self.attention(init_feature, masks)
         idxs = torch.tensor([index for index in category]).view(-1, 1).cuda()
         domain_embedding = self.domain_embedder(idxs).squeeze(1)
@@ -134,7 +133,8 @@ class MultiDomainFENDModel(torch.nn.Module):
         for i in range(self.num_expert):
             tmp_feature = self.expert[i](init_feature)
             shared_feature += (tmp_feature * gate_value[:, i].unsqueeze(1))
-        
+        print("shared feature after bert has size:", shared_feature.size())
+        breakpoint()
         # imgs_feature = imgs
         
         if (self.type_fusion == 0):
