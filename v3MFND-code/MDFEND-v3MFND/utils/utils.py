@@ -106,13 +106,25 @@ def data2gpu(batch, use_cuda, with_emotion):
             'metadata': batch[5].cuda()
             }
     else:
-        batch_data = {
+        if with_emotion:
+            batch_data = {
             'content': batch[0],
             'content_masks': batch[1],
             'label': batch[2],
             'category': batch[3],
-            'emotion': batch[4], 
-            #'img': batch[4], 
+            'emotion': batch[4],
+            # 'img': batch[4], 
+            # 'metadata': batch[5]
+            'metadata': batch[5]
+            }
+        else:
+            batch_data = {
+            'content': batch[0],
+            'content_masks': batch[1],
+            'label': batch[2],
+            'category': batch[3],
+            # 'img': batch[4], 
+            # 'metadata': batch[5]
             'metadata': batch[5]
             }
     return batch_data
