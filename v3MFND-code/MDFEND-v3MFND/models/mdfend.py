@@ -198,7 +198,14 @@ class MultiDomainFENDModel(torch.nn.Module):
     
             # Resize the 'emotion' tensor using self.resize_emo
             emotion = self.resize_emo(emotion)
-            shared_feature = torch.cat((emotion ,shared_feature ), -1)
+            
+            ## concat
+            #shared_feature = torch.cat((emotion ,shared_feature ), -1)
+            
+            ## mean
+            
+            ## sum
+            shared_feature = torch.add(emotion ,shared_feature)
         
         label_pred = self.classifier(shared_feature)
         
@@ -317,7 +324,7 @@ class Trainer():
                 batch_data = data2gpu(batch, self.use_cuda, self.with_emotion)
                 batch_label = batch_data['label']
                 batch_category = batch_data['category']
-                batch_label_pred = self.model(**batch_data)
+                batch_label_pred = self.model(**batch_data) 
 
                 label.extend(batch_label.detach().cpu().numpy().tolist())
                 pred.extend(batch_label_pred.detach().cpu().numpy().tolist())
