@@ -203,6 +203,8 @@ class MultiDomainFENDModel(torch.nn.Module):
             #shared_feature = torch.cat((emotion ,shared_feature ), -1)
             
             ## mean
+            # stack_vector = torch.stack([emotion,shared_feature])
+            # shared_feature = torch.mean(stack_vector, dim=0)
             
             ## sum
             shared_feature = torch.add(emotion ,shared_feature)
