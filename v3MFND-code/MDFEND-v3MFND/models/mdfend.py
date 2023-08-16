@@ -107,7 +107,11 @@ class MultiDomainFENDModel(torch.nn.Module):
         if (self.fusion_source == 4):
             #self.classifier = MLP( 640, mlp_dims, dropout) # text + emo: concat
             self.classifier = MLP( 320, mlp_dims, dropout) # text + emo: sum, mean
-
+        if (self.fusion_source == 5):
+            if fusion_type == 'concat':
+                self.classifier = MLP( 960, mlp_dims, dropout) # text + emo: concat
+            else:
+                self.classifier = MLP( 320, mlp_dims, dropout) # text + emo: sum, mean
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
