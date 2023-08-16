@@ -278,7 +278,7 @@ class Trainer():
     def train(self, logger = None):
         if(logger):
             logger.info('start training......')
-        self.model = MultiDomainFENDModel(self.emb_dim, self.mlp_dims, self.bert, self.dropout, self.emb_type, self.fusion_source)
+        self.model = MultiDomainFENDModel(self.emb_dim, self.mlp_dims, self.bert, self.dropout, self.emb_type, self.fusion_source, self.fusion_type)
         if self.use_cuda:
             self.model = self.model.cuda()
         loss_fn = torch.nn.BCELoss()
