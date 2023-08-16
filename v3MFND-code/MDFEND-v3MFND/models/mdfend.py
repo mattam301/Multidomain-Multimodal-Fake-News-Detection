@@ -227,6 +227,7 @@ class MultiDomainFENDModel(torch.nn.Module):
 class Trainer():
     def __init__(self,
                 fusion_source , 
+                fusion_type,
                  emb_dim,
                  mlp_dims,
                  bert,
@@ -266,6 +267,7 @@ class Trainer():
         self.dropout = dropout
         self.emb_type = emb_type
         self.fusion_source = fusion_source
+        self.fusion_type = fusion_type
         
         if not os.path.exists(save_param_dir):
             self.save_param_dir = os.makedirs(save_param_dir)
