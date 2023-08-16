@@ -176,31 +176,37 @@ class MultiDomainFENDModel(torch.nn.Module):
         if (self.fusion_source == 2):
             shared_feature =  self.norm_text(shared_feature)
             metadata = self.resize_meta(metadata)
-            imgs_feature = self.resize_img2(imgs_feature)  ## resize img -> 4096 - 2742 - 320
+            imgs_feature = self.resize_img(imgs_feature)  ## resize img -> 4096 - 2742 - 320
             
             ## concat
-            shared_feature = torch.cat((shared_feature,imgs_feature , metadata ), -1) ## img + text + meta
+            if self.fusion_type == 'concat':
+                shared_feature = torch.cat((shared_feature,imgs_feature , metadata ), -1) ## img + text + meta
             
             ## fusion: mean
-            # stack_vector = torch.stack([metadata,shared_feature,imgs_feature ])
-            # shared_feature = torch.mean(stack_vector, dim=0)
+            elif self.fusion_type == 'mean':
+                stack_vector = torch.stack([metadata,shared_feature,imgs_feature ])
+                shared_feature = torch.mean(stack_vector, dim=0)
 
             # ##fusion : sum
-            # shared_feature = torch.add(metadata ,shared_feature) 
-            # shared_feature = torch.add(shared_feature, imgs_feature) 
-        if (self.fusion_source == 3):
+            elif self.fusion_type == 'add':
+                shared_feature = torch.add(metadata ,shared_feature) 
+                shared_feature = torch.add(shared_feature, imgs_feature) 
+        if (self.fusion_source == 3):   # meta+ text
             shared_feature =  self.norm_text(shared_feature)
             metadata = self.resize_meta(metadata)
             ## fusion: concat
-            # shared_feature = torch.cat((metadata ,shared_feature ), -1) # meta+ text
+            if self.fusion_type == 'concat':
+                shared_feature = torch.cat((metadata ,shared_feature ), -1) 
             
             ## fusion: mean
-            # stack_vector = torch.stack([metadata,shared_feature])
-            # shared_feature = torch.mean(stack_vector, dim=0)
+            elif self.fusion_type == 'mean':
+                stack_vector = torch.stack([metadata,shared_feature])
+                shared_feature = torch.mean(stack_vector, dim=0)
 
             ##fusion : sum
-            shared_feature = torch.add(metadata ,shared_feature) ## img + text
-        if (self.fusion_source == 4):
+            elif self.fusion_type == 'add':
+                shared_feature = torch.add(metadata ,shared_feature) 
+        if (self.fusion_source == 4):## emotion + text
             shared_feature =  self.norm_text(shared_feature)
             #emotion = self.resize_emo(emotion)
             # Convert the 'emotion' tensor to the data type expected by self.resize_emo
@@ -211,15 +217,40 @@ class MultiDomainFENDModel(torch.nn.Module):
             emotion = self.resize_emo(emotion)
             
             ## concat
-            #shared_feature = torch.cat((emotion ,shared_feature ), -1)
+            if self.fusion_type == 'concat':
+                shared_feature = torch.cat((emotion ,shared_feature ), -1)
             
             ## mean
-            # stack_vector = torch.stack([emotion,shared_feature])
-            # shared_feature = torch.mean(stack_vector, dim=0)
+            elif self.fusion_type == 'mean':
+                stack_vector = torch.stack([emotion,shared_feature])
+                shared_feature = torch.mean(stack_vector, dim=0)
             
             ## sum
-            shared_feature = torch.add(emotion ,shared_feature)
-        
+            elif self.fusion_type == 'add':
+                shared_feature = torch.add(emotion ,shared_feature)
+        if (self.fusion_source == 5):
+            shared_feature =  self.norm_text(shared_feature)
+            #emotion = self.resize_emo(emotion)
+            # Convert the 'emotion' tensor to the data type expected by self.resize_emo
+            expected_dtype = self.resize_emo[0].weight.dtype
+            emotion = emotion.to(expected_dtype)
+            # Resize the 'emotion' tensor using self.resize_emo
+            emotion = self.resize_emo(emotion)
+            imgs_feature = self.resize_img(imgs_feature)  ## resize img -> 320
+            
+            ## concat
+            if self.fusion_type == 'concat':
+                shared_feature = torch.cat((shared_feature,imgs_feature , emotion ), -1) ## img + text + emotion
+            
+            ## fusion: mean
+            elif self.fusion_type == 'mean':
+                stack_vector = torch.stack([emotion,shared_feature,imgs_feature ])
+                shared_feature = torch.mean(stack_vector, dim=0)
+
+            # ##fusion : sum
+            elif self.fusion_type == 'add':
+                shared_feature = torch.add(emotion ,shared_feature) 
+                shared_feature = torch.add(shared_feature, imgs_feature)
         label_pred = self.classifier(shared_feature)
         
         return torch.sigmoid(label_pred.squeeze(1))
