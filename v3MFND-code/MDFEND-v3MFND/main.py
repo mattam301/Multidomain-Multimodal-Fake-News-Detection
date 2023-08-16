@@ -19,7 +19,7 @@ parser.add_argument('--lr', type=float, default=0.0005)
 parser.add_argument('--emb_type', default='bert')
 parser.add_argument('--w2v_vocab_file', default='./pretrained_model/w2v/Tencent_AILab_Chinese_w2v_model.kv')
 parser.add_argument('--save_param_dir', default= './param_model')
-parser.add_argument('--type_fusion',type = int)
+parser.add_argument('--fusion_source',type = int)
 parser.add_argument('--with_emotion', action="store_true",default=False,help="Using emotion data")
 args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
@@ -44,11 +44,11 @@ elif args.emb_type == 'w2v':
     emb_dim = args.w2v_emb_dim
     vocab_file = args.w2v_vocab_file
   
-print('type_fusion: {}; lr: {}; model name: {}; emb_type: {}; batchsize: {}; epoch: {}; gpu: {}; emb_dim: {}'.format(args.type_fusion ,  args.lr, args.model_name, args.emb_type,  args.batchsize, args.epoch, args.gpu, emb_dim))
+print('fusion_source: {}; lr: {}; model name: {}; emb_type: {}; batchsize: {}; epoch: {}; gpu: {}; emb_dim: {}'.format(args.fusion_source ,  args.lr, args.model_name, args.emb_type,  args.batchsize, args.epoch, args.gpu, emb_dim))
 
 
 config = {
-        'type_fusion': args.type_fusion, 
+        'fusion_source': args.fusion_source, 
         'use_cuda': True,
         'with_emotion': True,
         'batchsize': args.batchsize,

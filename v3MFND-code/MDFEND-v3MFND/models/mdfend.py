@@ -14,14 +14,14 @@ import torchvision.models as models
  
 
 class MultiDomainFENDModel(torch.nn.Module):
-    def __init__(self, emb_dim, mlp_dims, bert, dropout, emb_type , type_fusion):
+    def __init__(self, emb_dim, mlp_dims, bert, dropout, emb_type , fusion_source):
         super(MultiDomainFENDModel, self).__init__()
         self.domain_num = 10
         self.gamma = 10
         self.num_expert = 6
         self.fea_size =256
         self.emb_type = emb_type
-        self.type_fusion = type_fusion
+        self.fusion_source = fusion_source
         
         
         if(emb_type == 'bert'):
@@ -88,22 +88,22 @@ class MultiDomainFENDModel(torch.nn.Module):
                                       
 
         ## img dim - 4096, text - 320, meta - 17
-        if (self.type_fusion == 0):
+        if (self.fusion_source == 0):
             self.classifier = MLP( 320, mlp_dims, dropout) #text
-        if (self.type_fusion == 1):
+        if (self.fusion_source == 1):
             
             self.classifier = MLP( 640, mlp_dims, dropout) #text + img: concat
             # self.classifier = MLP( 320, mlp_dims, dropout) #text + img: mean, sum, weighted sum
-        if (self.type_fusion == 2):
+        if (self.fusion_source == 2):
             self.classifier = MLP(960, mlp_dims, dropout) #text+ img + meta
             # self.classifier = MLP( 320, mlp_dims, dropout) #text + img + meta: mean, sum, weighted sum
             
 
         
-        if (self.type_fusion == 3):
+        if (self.fusion_source == 3):
             # self.classifier = MLP(640, mlp_dims, dropout) #text+meta:concat
             self.classifier = MLP( 320, mlp_dims, dropout) #text + meta: mean, sum, weighted sum
-        if (self.type_fusion == 4):
+        if (self.fusion_source == 4):
             #self.classifier = MLP( 640, mlp_dims, dropout) # text + emo: concat
             self.classifier = MLP( 320, mlp_dims, dropout) # text + emo: sum, mean
 
@@ -153,9 +153,9 @@ class MultiDomainFENDModel(torch.nn.Module):
         #breakpoint()
         imgs_feature = imgs
         
-        if (self.type_fusion == 0):
+        if (self.fusion_source == 0):
             shared_feature = shared_feature # text
-        if (self.type_fusion == 1):
+        if (self.fusion_source == 1):
             imgs_feature = self.resize_img(imgs_feature)  ## resize img -> 4096 - 2742 - 320:
             shared_feature =  self.norm_text(shared_feature)
             
@@ -170,7 +170,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             # ##fusion : sum
             # shared_feature = torch.add(imgs_feature ,shared_feature) ## img + text
         
-        if (self.type_fusion == 2):
+        if (self.fusion_source == 2):
             shared_feature =  self.norm_text(shared_feature)
             metadata = self.resize_meta(metadata)
             imgs_feature = self.resize_img2(imgs_feature)  ## resize img -> 4096 - 2742 - 320
@@ -185,7 +185,7 @@ class MultiDomainFENDModel(torch.nn.Module):
             # ##fusion : sum
             # shared_feature = torch.add(metadata ,shared_feature) 
             # shared_feature = torch.add(shared_feature, imgs_feature) 
-        if (self.type_fusion == 3):
+        if (self.fusion_source == 3):
             shared_feature =  self.norm_text(shared_feature)
             metadata = self.resize_meta(metadata)
             ## fusion: concat
@@ -197,7 +197,7 @@ class MultiDomainFENDModel(torch.nn.Module):
 
             ##fusion : sum
             shared_feature = torch.add(metadata ,shared_feature) ## img + text
-        if (self.type_fusion == 4):
+        if (self.fusion_source == 4):
             shared_feature =  self.norm_text(shared_feature)
             #emotion = self.resize_emo(emotion)
             # Convert the 'emotion' tensor to the data type expected by self.resize_emo
@@ -223,7 +223,7 @@ class MultiDomainFENDModel(torch.nn.Module):
 
 class Trainer():
     def __init__(self,
-                type_fusion , 
+                fusion_source , 
                  emb_dim,
                  mlp_dims,
                  bert,
@@ -262,7 +262,7 @@ class Trainer():
         self.bert = bert
         self.dropout = dropout
         self.emb_type = emb_type
-        self.type_fusion = type_fusion
+        self.fusion_source = fusion_source
         
         if not os.path.exists(save_param_dir):
             self.save_param_dir = os.makedirs(save_param_dir)
@@ -273,7 +273,7 @@ class Trainer():
     def train(self, logger = None):
         if(logger):
             logger.info('start training......')
-        self.model = MultiDomainFENDModel(self.emb_dim, self.mlp_dims, self.bert, self.dropout, self.emb_type, self.type_fusion)
+        self.model = MultiDomainFENDModel(self.emb_dim, self.mlp_dims, self.bert, self.dropout, self.emb_type, self.fusion_source)
         if self.use_cuda:
             self.model = self.model.cuda()
         loss_fn = torch.nn.BCELoss()

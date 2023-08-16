@@ -23,7 +23,7 @@ class Run():
                  ):
         self.configinfo = config
 
-        self.type_fusion = config['type_fusion']
+        self.fusion_source = config['fusion_source']
         self.use_cuda = config['use_cuda']
         self.with_emotion = config['with_emotion']
         self.model_name = config['model_name']
@@ -110,7 +110,7 @@ class Run():
         train_loader, val_loader, test_loader = self.get_dataloader()
         # print(self.mlp_dims)
         if self.model_name == 'mdfend':
-            trainer = MDFENDTrainer(emb_dim = self.emb_dim, mlp_dims = self.mlp_dims, bert = self.bert, emb_type = self.emb_type,type_fusion = self.type_fusion, 
+            trainer = MDFENDTrainer(emb_dim = self.emb_dim, mlp_dims = self.mlp_dims, bert = self.bert, emb_type = self.emb_type,fusion_source = self.fusion_source, 
                 use_cuda = self.use_cuda,with_emotion=self.with_emotion, lr = self.lr, train_loader = train_loader, dropout = self.dropout, weight_decay = self.weight_decay, val_loader = val_loader, test_loader = test_loader, category_dict = self.category_dict, early_stop = self.early_stop, epoches = self.epoch,
                 save_param_dir = os.path.join(self.save_param_dir, self.model_name))  
         # print(torch.__version__)
