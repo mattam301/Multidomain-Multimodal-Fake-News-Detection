@@ -14,7 +14,7 @@ import torchvision.models as models
  
 
 class MultiDomainFENDModel(torch.nn.Module):
-    def __init__(self, emb_dim, mlp_dims, bert, dropout, emb_type , fusion_source):
+    def __init__(self, emb_dim, mlp_dims, bert, dropout, emb_type , fusion_source, fusion_type):
         super(MultiDomainFENDModel, self).__init__()
         self.domain_num = 10
         self.gamma = 10
@@ -22,7 +22,7 @@ class MultiDomainFENDModel(torch.nn.Module):
         self.fea_size =256
         self.emb_type = emb_type
         self.fusion_source = fusion_source
-        
+        self.fusion_type = fusion_type
         
         if(emb_type == 'bert'):
             # self.bert = BertModel.from_pretrained(bert).requires_grad_(False)
@@ -91,9 +91,10 @@ class MultiDomainFENDModel(torch.nn.Module):
         if (self.fusion_source == 0):
             self.classifier = MLP( 320, mlp_dims, dropout) #text
         if (self.fusion_source == 1):
-            
-            self.classifier = MLP( 640, mlp_dims, dropout) #text + img: concat
-            # self.classifier = MLP( 320, mlp_dims, dropout) #text + img: mean, sum, weighted sum
+            if self.fusion_type == "concat":
+                self.classifier = MLP( 640, mlp_dims, dropout) #text + img: concat
+            else: 
+                self.classifier = MLP( 320, mlp_dims, dropout) #text + img: mean, sum, weighted sum
         if (self.fusion_source == 2):
             self.classifier = MLP(960, mlp_dims, dropout) #text+ img + meta
             # self.classifier = MLP( 320, mlp_dims, dropout) #text + img + meta: mean, sum, weighted sum
@@ -160,15 +161,17 @@ class MultiDomainFENDModel(torch.nn.Module):
             shared_feature =  self.norm_text(shared_feature)
             
             ## fusion: concat
-          
-            shared_feature = torch.cat((imgs_feature ,shared_feature ), -1) ## img + text
-
+            if self.fusion_type == 'concat':
+                shared_feature = torch.cat((imgs_feature ,shared_feature ), -1) ## img + text
+                
+            elif self.fusion_type == 'mean':
             # ## fusion: mean
-            # stack_vector = torch.stack([imgs_feature,shared_feature])
-            # shared_feature = torch.mean(stack_vector, dim=0)
-
+                stack_vector = torch.stack([imgs_feature,shared_feature])
+                shared_feature = torch.mean(stack_vector, dim=0)
+            
             # ##fusion : sum
-            # shared_feature = torch.add(imgs_feature ,shared_feature) ## img + text
+            elif self.fusion_type == 'add':
+                shared_feature = torch.add(imgs_feature ,shared_feature) ## img + text
         
         if (self.fusion_source == 2):
             shared_feature =  self.norm_text(shared_feature)
