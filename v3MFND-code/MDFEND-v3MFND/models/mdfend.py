@@ -77,7 +77,8 @@ class MultiDomainFENDModel(torch.nn.Module):
                                       nn.ReLU(),
                                       nn.Dropout(p=0.4), 
                                       )
-        self.resize_img =  nn.Sequential(nn.Linear(4096, 320),
+        ## 512 -> 320
+        self.resize_img =  nn.Sequential(nn.Linear(512, 320),
                                         nn.BatchNorm1d(320),
                                       nn.ReLU(), 
                                       nn.Dropout(p=0.4)
@@ -110,22 +111,26 @@ class MultiDomainFENDModel(torch.nn.Module):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
         print(f"Inputs's type: {type(inputs)}")
+        
         masks = kwargs['content_masks']
         print(f"Mask's type: {type(masks)}")
+        
         category = kwargs['category']
         print(f"Cate's type: {type(category)}")
+        
         imgs = kwargs['img']
         print(f"imgs's type: {type(imgs)}")
-        emotion = kwargs['emotion']
         
+        emotion = kwargs['emotion']
         print(f"Emotion's type: {type(emotion)}")
+        
         metadata = kwargs['metadata']
         print(f"Meta's type: {type(metadata)}")
 
         print("Inputs size:", inputs.size())
         print("Emotion size:", emotion.size())
+        print("img size:", imgs.size())
 
-        #inputs = torch.cat((inputs, emotion), dim=1)
         #breakpoint()
         if self.emb_type == "bert":
             init_feature = self.bert(inputs, attention_mask = masks)[0]
@@ -146,12 +151,12 @@ class MultiDomainFENDModel(torch.nn.Module):
             shared_feature += (tmp_feature * gate_value[:, i].unsqueeze(1))
         print("shared feature after bert has size:", shared_feature.size())
         #breakpoint()
-        # imgs_feature = imgs
+        imgs_feature = imgs
         
         if (self.type_fusion == 0):
             shared_feature = shared_feature # text
         if (self.type_fusion == 1):
-            imgs_feature = self.resize_img2(imgs_feature)  ## resize img -> 4096 - 2742 - 320:
+            imgs_feature = self.resize_img(imgs_feature)  ## resize img -> 4096 - 2742 - 320:
             shared_feature =  self.norm_text(shared_feature)
             
             ## fusion: concat
