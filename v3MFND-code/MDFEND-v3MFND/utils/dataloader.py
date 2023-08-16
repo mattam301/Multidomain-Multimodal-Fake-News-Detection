@@ -88,7 +88,7 @@ class bert_data():
         self.vocab_file = vocab_file
         self.category_dict = category_dict
     
-    def load_data(self, path,img_path ,shuffle):
+    def load_data(self, path, shuffle):
         self.data, idx_list = df_filter(read_pkl(path))
         print(idx_list)
         content = self.data['content'].to_numpy()
@@ -96,32 +96,40 @@ class bert_data():
         category = torch.tensor(self.data['category'].apply(lambda c: self.category_dict[c]).to_numpy())
         content_token_ids, content_masks = word2input(content, self.vocab_file, self.max_len)
         
-        # img = []  # To store the tensor values
-        # img_dict = npy_loader(img_path)
-        # print((img_dict).keys())
-        # for key in idx_list:
-        #   img.append(torch.tensor(img_dict[key]))
-        #img = torch.tensor(npy_loader(img_path)[idx_list, :])
-        # print(type(img))
         metadata = torch.tensor(self.data[feature_columns].astype('float32').to_numpy())
+        
         # Load the new emo column
         emotion_column = self.data['emotion_nrc'].to_numpy()
 
         # Create a list to store tensors from the new array column
         emotion_tensors = []
-        for array in emotion_column:
+        for e_array in emotion_column:
             # Convert each array element to a tensor and append to the list
-            emotion_tensors.append(torch.tensor(array))
+            emotion_tensors.append(torch.tensor(e_array))
 
         # Stack the tensors to create the final new array tensor
         emotion_tensor = torch.stack(emotion_tensors)
-        #print(emotion_tensor)
+        
+        ##########################################################
+        # Load the new img column
+        img_column = self.data['image_feat'].to_numpy()
+
+        # Create a list to store tensors from the new array column
+        image_tensors = []
+        for i_array in img_column:
+            # Convert each array element to a tensor and append to the list
+            image_tensors.append(torch.tensor(i_array))
+
+        # Stack the tensors to create the final new array tensor
+        image_tensor = torch.stack(image_tensors)
+
         dataset = TensorDataset(content_token_ids,
                                 content_masks,
                                 label,
                                 category,
                                 # img, 
                                 emotion_tensor,
+                                image_tensor,
                                 metadata
                                 )
         dataloader = DataLoader(

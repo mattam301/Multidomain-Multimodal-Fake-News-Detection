@@ -91,9 +91,8 @@ def data2gpu(batch, use_cuda, with_emotion):
             'label': batch[2].cuda(),
             'category': batch[3].cuda(),
             'emotion': batch[4].cuda(),
-            # 'img': batch[4].cuda(), 
-            # 'metadata': batch[5].cuda()
-            'metadata': batch[5].cuda()
+            'img': batch[5].cuda(), 
+            'metadata': batch[6].cuda()
             }
         else:
             batch_data = {
@@ -101,9 +100,8 @@ def data2gpu(batch, use_cuda, with_emotion):
             'content_masks': batch[1].cuda(),
             'label': batch[2].cuda(),
             'category': batch[3].cuda(),
-            # 'img': batch[4].cuda(), 
-            # 'metadata': batch[5].cuda()
-            'metadata': batch[5].cuda()
+            'img': batch[5].cuda(), 
+            'metadata': batch[6].cuda()
             }
     else:
         if with_emotion:
@@ -113,9 +111,8 @@ def data2gpu(batch, use_cuda, with_emotion):
             'label': batch[2],
             'category': batch[3],
             'emotion': batch[4],
-            # 'img': batch[4], 
-            # 'metadata': batch[5]
-            'metadata': batch[5]
+            'img': batch[5], 
+            'metadata': batch[6]
             }
         else:
             batch_data = {
@@ -123,9 +120,9 @@ def data2gpu(batch, use_cuda, with_emotion):
             'content_masks': batch[1],
             'label': batch[2],
             'category': batch[3],
-            # 'img': batch[4], 
+            'img': batch[5], 
             # 'metadata': batch[5]
-            'metadata': batch[5]
+            'metadata': batch[6]
             }
     return batch_data
 

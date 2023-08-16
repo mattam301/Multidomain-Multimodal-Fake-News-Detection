@@ -114,7 +114,8 @@ class MultiDomainFENDModel(torch.nn.Module):
         print(f"Mask's type: {type(masks)}")
         category = kwargs['category']
         print(f"Cate's type: {type(category)}")
-        # imgs = kwargs['img']
+        imgs = kwargs['img']
+        print(f"imgs's type: {type(imgs)}")
         emotion = kwargs['emotion']
         
         print(f"Emotion's type: {type(emotion)}")
