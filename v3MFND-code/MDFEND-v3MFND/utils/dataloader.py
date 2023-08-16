@@ -127,7 +127,6 @@ class bert_data():
                                 content_masks,
                                 label,
                                 category,
-                                # img, 
                                 emotion_tensor,
                                 image_tensor,
                                 metadata
@@ -142,7 +141,7 @@ class bert_data():
             drop_last=True
         )
         for batch_idx, batch_data in enumerate(dataloader):
-          content_token_ids, content_masks, labels, categories, emotion_tensor, metadata = batch_data
+          content_token_ids, content_masks, labels, categories, emotion_tensor, image_tensor, metadata = batch_data
     
         #   print(f"Batch {batch_idx + 1} information:")
         #   print(f"Content Token IDs shape: {content_token_ids.shape}")
