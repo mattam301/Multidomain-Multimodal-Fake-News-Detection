@@ -117,26 +117,11 @@ class MultiDomainFENDModel(torch.nn.Module):
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
-        print(f"Inputs's type: {type(inputs)}")
-        
-        masks = kwargs['content_masks']
-        print(f"Mask's type: {type(masks)}")
-        
+        masks = kwargs['content_masks']        
         category = kwargs['category']
-        print(f"Cate's type: {type(category)}")
-        
-        imgs = kwargs['img']
-        print(f"imgs's type: {type(imgs)}")
-        
-        emotion = kwargs['emotion']
-        print(f"Emotion's type: {type(emotion)}")
-        
+        imgs = kwargs['img']        
+        emotion = kwargs['emotion']        
         metadata = kwargs['metadata']
-        print(f"Meta's type: {type(metadata)}")
-
-        print("Inputs size:", inputs.size())
-        print("Emotion size:", emotion.size())
-        print("img size:", imgs.size())
 
         #breakpoint()
         if self.emb_type == "bert":
@@ -156,7 +141,6 @@ class MultiDomainFENDModel(torch.nn.Module):
         for i in range(self.num_expert):
             tmp_feature = self.expert[i](init_feature)
             shared_feature += (tmp_feature * gate_value[:, i].unsqueeze(1))
-        print("shared feature after bert has size:", shared_feature.size())
         #breakpoint()
         imgs_feature = imgs
         
@@ -344,14 +328,10 @@ class Trainer():
         for epoch in range(self.epoches):
             self.model.train()
             train_data_iter = tqdm.tqdm(self.train_loader)
-            # print(train_data_iter)
-            # print("////")
             avg_loss = Averager()
 
             for step_n, batch in enumerate(train_data_iter):
-                #print(len(batch))
                 batch_data = data2gpu(batch, self.use_cuda, self.with_emotion)
-                #print(batch_data)
                 label = batch_data['label']
                 category = batch_data['category']
 
@@ -365,10 +345,7 @@ class Trainer():
                     scheduler.step()
                 avg_loss.add(loss.item())
             
-            # results_training = self.test(self.train_loader)['metric'] 
             
-            # print('Training Epoch {}; Loss {}; Training_AUC {}'.format(epoch + 1, avg_loss.item(), results_training))
-
             results = self.test(self.val_loader)
             print('5_domain_concat_type1 - VAL Epoch {};  VAL_AUC {}'.format(epoch + 1,  results['metric']))
             mark = recorder.add(results)

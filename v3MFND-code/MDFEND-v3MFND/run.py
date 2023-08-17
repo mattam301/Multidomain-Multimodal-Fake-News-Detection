@@ -51,21 +51,13 @@ class Run():
         # self.test_path = self.root_path +'val_vlsp2020.pkl'
         
         
-        self.train_img_path = self.root_path + 'imgs_train_vgg_fea.npy'
-        self.val_img_path = self.root_path + 'imgs_dev_vgg_fea.npy'
-        self.test_img_path = self.root_path + 'imgs_test_vgg_fea.npy'
-        # self.test_img_path = self.root_path + 'imgs_dev_vgg_fea.npy'
+
 ## 5 domain
         # self.train_path = self.root_path + 'train_vlsp2020_5domain.pkl'
         # self.val_path = self.root_path + 'val_vlsp2020_5domain.pkl'
         # # self.test_path = self.root_path + 'test_vlsp2020_5domain.pkl'
         # self.test_path = self.root_path +'val_vlsp2020_5domain.pkl'
         
-        
-        # self.train_img_path = self.root_path + 'imgs_train_vgg_fea_5domain.npy'
-        # self.val_img_path = self.root_path + 'imgs_dev_vgg_fea_5domain.npy'
-        # # self.test_img_path = self.root_path + 'imgs_test_vgg_fea_5domain.npy'
-        # self.test_img_path = self.root_path + 'imgs_dev_vgg_fea_5domain.npy'
          
         self.category_dict = {
             
