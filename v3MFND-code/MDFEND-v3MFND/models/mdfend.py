@@ -109,9 +109,11 @@ class MultiDomainFENDModel(torch.nn.Module):
             self.classifier = MLP( 320, mlp_dims, dropout) # text + emo: sum, mean
         if (self.fusion_source == 5):
             if fusion_type == 'concat':
-                self.classifier = MLP( 960, mlp_dims, dropout) # text + emo: concat
+                self.classifier = MLP( 960, mlp_dims, dropout) # text + emo + img: concat
             else:
-                self.classifier = MLP( 320, mlp_dims, dropout) # text + emo: sum, mean
+                self.classifier = MLP( 320, mlp_dims, dropout) # text + emo + img: sum, mean
+        if (self.fusion_source == 6):
+            self.classifier = MLP( 640, mlp_dims, dropout) # text + emo + img: sum, mean
     def forward(self, **kwargs):
         #print(f"dataloader's key features: {kwargs.keys()}")
         inputs = kwargs['content']
@@ -255,6 +257,25 @@ class MultiDomainFENDModel(torch.nn.Module):
             elif self.fusion_type == 'add':
                 shared_feature = torch.add(emotion ,shared_feature) 
                 shared_feature = torch.add(shared_feature, imgs_feature)
+        if (self.fusion_source == 6):
+            shared_feature =  self.norm_text(shared_feature)
+            #emotion = self.resize_emo(emotion)
+            # Convert the 'emotion' tensor to the data type expected by self.resize_emo
+            expected_dtype = self.resize_emo[0].weight.dtype
+            emotion = emotion.to(expected_dtype)
+            # Resize the 'emotion' tensor using self.resize_emo
+            emotion = self.resize_emo(emotion)
+            imgs_feature = self.resize_img(imgs_feature)  ## resize img -> 320
+            
+            ## concat(mean(shared,emo), mean(share,img))
+            stack_vector = torch.stack([emotion,shared_feature])
+            shared_feature1 = torch.mean(stack_vector, dim=0)
+            
+            stack_vector = torch.stack([imgs_feature,shared_feature])
+            shared_feature2 = torch.mean(stack_vector, dim=0)
+            
+            shared_feature = torch.cat((shared_feature1, shared_feature2),-1)
+            
         label_pred = self.classifier(shared_feature)
         
         return torch.sigmoid(label_pred.squeeze(1))
