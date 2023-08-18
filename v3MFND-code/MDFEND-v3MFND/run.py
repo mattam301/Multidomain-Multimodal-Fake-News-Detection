@@ -1,8 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-# from gensim.models.keyedvectors import Vocab
-# from transformers.file_utils import CONFIG_NAME
 from utils.dataloader import w2v_data
 import torch
 import tqdm
@@ -27,6 +22,7 @@ class Run():
         self.fusion_type = config['fusion_type']
         self.use_cuda = config['use_cuda']
         self.with_emotion = config['with_emotion']
+        self.cat_quantity = config['cat_quantity']
         self.model_name = config['model_name']
         self.lr = config['lr']
         self.batchsize = config['batchsize']
@@ -48,7 +44,6 @@ class Run():
         self.train_path = self.root_path + 'train_vlsp2020_e_enhanced.pkl'
         self.val_path = self.root_path + 'val_vlsp2020_e_enhanced.pkl'
         self.test_path = self.root_path + 'test_vlsp2020_e_enhanced.pkl'
-        # self.test_path = self.root_path +'val_vlsp2020.pkl'
         
         
 
@@ -87,9 +82,11 @@ class Run():
         elif self.emb_type == 'w2v':
             loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
                     batch_size=self.batchsize, category_dict=self.category_dict, num_workers= self.num_workers)
-        train_loader = loader.load_data(self.train_path, True)
-        val_loader = loader.load_data(self.val_path, False)
-        test_loader = loader.load_data(self.test_path, False)
+            
+        if self.cat_quantity == 10:
+            train_loader = loader.load_data_10(self.train_path, True)
+            val_loader = loader.load_data_10(self.val_path, False)
+            test_loader = loader.load_data_10(self.test_path, False)
         
         return train_loader, val_loader, test_loader
     

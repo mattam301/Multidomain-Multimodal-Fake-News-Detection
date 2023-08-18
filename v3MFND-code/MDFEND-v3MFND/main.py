@@ -22,6 +22,7 @@ parser.add_argument('--save_param_dir', default= './param_model')
 parser.add_argument('--fusion_source',type = int)
 parser.add_argument("--fusion_type",type=str, required=True,default="concat",choices=["concat", "mean","add"],help="Select the way different sources are fused",)
 parser.add_argument('--with_emotion', action="store_true",default=False,help="Using emotion data")
+parser.add_argument("--cat_quantity",type=int, required=True,default=10,choices=[5,10],help="Select 5-label dataset or 10-label dataset",)
 args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
@@ -53,6 +54,7 @@ config = {
         'fusion_type': args.fusion_type,
         'use_cuda': True,
         'with_emotion': True,
+        'cat-quantity':10,
         'batchsize': args.batchsize,
         'max_len': args.max_len,
         'early_stop': args.early_stop,

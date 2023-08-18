@@ -32,13 +32,7 @@ def read_pkl(path):
         t = t.reset_index(drop=True)
     return t
 
-def df_filter(df_data):
-    # df_data = df_data[df_data['category'] != 'EDUCATION']
-    # df_data = df_data[df_data['category'] != 'ENTERTAINMENT']
-    # df_data = df_data[df_data['category'] != 'MILITARY']
-    # df_data = df_data[df_data['category'] != 'SCIENCE']
-    # df_data = df_data[df_data['category'] != 'SPORTS']
-    
+def df_filter_10(df_data):
     list_domain = [
             # 'DISASTERS',
             #  'FINANCE',
@@ -62,7 +56,18 @@ def df_filter(df_data):
     df_data = df_data[df_data['in_list_domain'] == 1]
     
     return df_data, list(df_data['numericalID'])
-
+def df_filter_5(df_data):
+    list_domain = [
+            'DISASTERS',
+             'FINANCE',
+             'POLITICS', 
+             'SOCIETY',
+             'HEALTH'
+        ]
+    df_data['in_list_domain'] = df_data.apply(lambda row: 1 if(row.category in list_domain ) else 0, axis = 1)
+    df_data = df_data[df_data['in_list_domain'] == 1]
+    
+    return df_data, list(df_data['numericalID'])
 def word2input(texts, vocab_file, max_len):
     
     ## MFEND
@@ -88,9 +93,9 @@ class bert_data():
         self.vocab_file = vocab_file
         self.category_dict = category_dict
     
-    def load_data(self, path, shuffle):
-        self.data, idx_list = df_filter(read_pkl(path))
-        print(idx_list)
+    def load_data_10(self, path, shuffle):
+        self.data, idx_list = df_filter_10(read_pkl(path))
+        #print(idx_list)
         content = self.data['content'].to_numpy()
         label = torch.tensor(self.data['label'].astype(int).to_numpy())
         category = torch.tensor(self.data['category'].apply(lambda c: self.category_dict[c]).to_numpy())
@@ -152,7 +157,62 @@ class bert_data():
         #   print(f"Metadata shape: {metadata.shape}")
 
         return dataloader
+    def load_data_5(self, path, shuffle):
+        self.data, idx_list = df_filter_5(read_pkl(path))
+        #print(idx_list)
+        content = self.data['content'].to_numpy()
+        label = torch.tensor(self.data['label'].astype(int).to_numpy())
+        category = torch.tensor(self.data['category'].apply(lambda c: self.category_dict[c]).to_numpy())
+        content_token_ids, content_masks = word2input(content, self.vocab_file, self.max_len)
+        
+        metadata = torch.tensor(self.data[feature_columns].astype('float32').to_numpy())
+        
+        # Load the new emo column
+        emotion_column = self.data['emotion_nrc'].to_numpy()
 
+        # Create a list to store tensors from the new array column
+        emotion_tensors = []
+        for e_array in emotion_column:
+            # Convert each array element to a tensor and append to the list
+            emotion_tensors.append(torch.tensor(e_array))
+
+        # Stack the tensors to create the final new array tensor
+        emotion_tensor = torch.stack(emotion_tensors)
+        
+        ##########################################################
+        # Load the new img column
+        img_column = self.data['image_feat'].to_numpy()
+
+        # Create a list to store tensors from the new array column
+        image_tensors = []
+        for i_array in img_column:
+            # Convert each array element to a tensor and append to the list
+            image_tensors.append(torch.tensor(i_array))
+
+        # Stack the tensors to create the final new array tensor
+        image_tensor = torch.stack(image_tensors)
+
+        dataset = TensorDataset(content_token_ids,
+                                content_masks,
+                                label,
+                                category,
+                                emotion_tensor,
+                                image_tensor,
+                                metadata
+                                )
+        dataloader = DataLoader(
+            dataset=dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            pin_memory=True,
+            shuffle=shuffle,
+            worker_init_fn=_init_fn, 
+            drop_last=True
+        )
+        for batch_idx, batch_data in enumerate(dataloader):
+          content_token_ids, content_masks, labels, categories, emotion_tensor, image_tensor, metadata = batch_data
+
+        return dataloader
 class w2v_data():
     def __init__(self, max_len, batch_size, emb_dim, vocab_file, category_dict, num_workers = 2):
         self.max_len = max_len
@@ -197,7 +257,7 @@ class w2v_data():
         return torch.tensor(np.array(embedding, dtype = np.float32))
 
     def load_data(self, path, shuffle = False):
-        self.data = df_filter(read_pkl(path))
+        self.data = df_filter_10(read_pkl(path))
         content = self.data['content'].to_numpy()
         label = torch.tensor(self.data['label'].astype(int).to_numpy())
         category = torch.tensor(self.data['category'].apply(lambda c: self.category_dict[c]).to_numpy())

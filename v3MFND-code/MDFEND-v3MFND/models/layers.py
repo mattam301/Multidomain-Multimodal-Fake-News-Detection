@@ -4,25 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Function
 import math
-# class Extract_img_fea(torch.nn.Module): 
-
-#     def __init__(self):
-#         super().__init__()
-
-
-#     def forward(self, img_4096):
-#         imgs_feature = nn.Sequential(
-#           nn.Linear(4096, 2000),
-#           nn.Linear(2000, 2000),
-#           nn.Linear(2000, 1000),
-#           nn.Linear(1000, 1000),
-#           nn.Linear(1000, 320),
-#           nn.BatchNorm1d(320), 
-#           nn.Dropout(p= 0.4)
-#         )(img_4096)
-#         imgs_feature = imgs_feature.view([-1, imgs_feature.shape[1]])
-#         return imgs_feature
-
 class MLP(torch.nn.Module):
 
     def __init__(self, input_dim, embed_dims, dropout, output_layer=True):
