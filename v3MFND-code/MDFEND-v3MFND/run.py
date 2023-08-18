@@ -95,7 +95,7 @@ class Run():
         # print(self.mlp_dims)
         if self.model_name == 'mdfend':
             trainer = MDFENDTrainer(emb_dim = self.emb_dim, mlp_dims = self.mlp_dims, bert = self.bert, emb_type = self.emb_type,fusion_source = self.fusion_source, fusion_type = self.fusion_type,
-                use_cuda = self.use_cuda,with_emotion=self.with_emotion, cat_quantity = self.cat_quantity, lr = self.lr, train_loader = train_loader, dropout = self.dropout, weight_decay = self.weight_decay, val_loader = val_loader, test_loader = test_loader, category_dict_10 = self.category_dict_10, early_stop = self.early_stop, epoches = self.epoch,
+                use_cuda = self.use_cuda,with_emotion=self.with_emotion, cat_quantity = self.cat_quantity, lr = self.lr, train_loader = train_loader, dropout = self.dropout, weight_decay = self.weight_decay, val_loader = val_loader, test_loader = test_loader, category_dict = self.category_dict_10, early_stop = self.early_stop, epoches = self.epoch,
                 save_param_dir = os.path.join(self.save_param_dir, self.model_name))  
         # print(torch.__version__)
         trainer.train()
