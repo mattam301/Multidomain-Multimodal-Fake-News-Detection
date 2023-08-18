@@ -44,17 +44,8 @@ class Run():
         self.train_path = self.root_path + 'train_vlsp2020_e_enhanced.pkl'
         self.val_path = self.root_path + 'val_vlsp2020_e_enhanced.pkl'
         self.test_path = self.root_path + 'test_vlsp2020_e_enhanced.pkl'
-        
-        
-
-## 5 domain
-        # self.train_path = self.root_path + 'train_vlsp2020_5domain.pkl'
-        # self.val_path = self.root_path + 'val_vlsp2020_5domain.pkl'
-        # # self.test_path = self.root_path + 'test_vlsp2020_5domain.pkl'
-        # self.test_path = self.root_path +'val_vlsp2020_5domain.pkl'
-        
-         
-        self.category_dict = {
+               
+        self.category_dict_10 = {
             
             #  'DISASTERS': 0, 
             #  'FINANCE': 1,
@@ -77,17 +68,20 @@ class Run():
     def get_dataloader(self):
         if self.emb_type == 'bert':
             loader = bert_data(max_len = self.max_len, batch_size = self.batchsize, vocab_file = self.vocab_file,
-                        category_dict = self.category_dict, num_workers=self.num_workers)
+                        category_dict_10 = self.category_dict_10, num_workers=self.num_workers)
             print(loader)
         elif self.emb_type == 'w2v':
             loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
-                    batch_size=self.batchsize, category_dict=self.category_dict, num_workers= self.num_workers)
+                    batch_size=self.batchsize, category_dict_10=self.category_dict_10, num_workers= self.num_workers)
             
         if self.cat_quantity == 10:
             train_loader = loader.load_data_10(self.train_path, True)
             val_loader = loader.load_data_10(self.val_path, False)
             test_loader = loader.load_data_10(self.test_path, False)
-        
+        if self.cat_quantity == 5:
+            train_loader = loader.load_data_5(self.train_path, True)
+            val_loader = loader.load_data_5(self.val_path, False)
+            test_loader = loader.load_data_5(self.test_path, False)
         return train_loader, val_loader, test_loader
     
     def config2dict(self):
@@ -101,7 +95,7 @@ class Run():
         # print(self.mlp_dims)
         if self.model_name == 'mdfend':
             trainer = MDFENDTrainer(emb_dim = self.emb_dim, mlp_dims = self.mlp_dims, bert = self.bert, emb_type = self.emb_type,fusion_source = self.fusion_source, fusion_type = self.fusion_type,
-                use_cuda = self.use_cuda,with_emotion=self.with_emotion, cat_quantity = self.cat_quantity, lr = self.lr, train_loader = train_loader, dropout = self.dropout, weight_decay = self.weight_decay, val_loader = val_loader, test_loader = test_loader, category_dict = self.category_dict, early_stop = self.early_stop, epoches = self.epoch,
+                use_cuda = self.use_cuda,with_emotion=self.with_emotion, cat_quantity = self.cat_quantity, lr = self.lr, train_loader = train_loader, dropout = self.dropout, weight_decay = self.weight_decay, val_loader = val_loader, test_loader = test_loader, category_dict_10 = self.category_dict_10, early_stop = self.early_stop, epoches = self.epoch,
                 save_param_dir = os.path.join(self.save_param_dir, self.model_name))  
         # print(torch.__version__)
         trainer.train()
