@@ -92,7 +92,7 @@ class Run():
                             category_dict = self.category_dict_5, num_workers=self.num_workers)
                 print("success load 5-domain data")
                 print(loader)
-                breakpoint()
+                #breakpoint()
             elif self.emb_type == 'w2v':
                 loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
                         batch_size=self.batchsize, category_dict=self.category_dict_5, num_workers= self.num_workers)
