@@ -64,21 +64,38 @@ class Run():
             "SOCIETY": 8,
             "SPORTS": 9
         }
+        self.category_dict_5 = {
+             'DISASTERS': 0, 
+             'FINANCE': 1,
+             'POLITICS': 2, 
+             'SOCIETY': 3,
+             'HEALTH': 4
+        }
 
     def get_dataloader(self):
-        if self.emb_type == 'bert':
-            loader = bert_data(max_len = self.max_len, batch_size = self.batchsize, vocab_file = self.vocab_file,
-                        category_dict = self.category_dict_10, num_workers=self.num_workers)
-            print(loader)
-        elif self.emb_type == 'w2v':
-            loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
-                    batch_size=self.batchsize, category_dict=self.category_dict_10, num_workers= self.num_workers)
-            
         if self.cat_quantity == 10:
+            if self.emb_type == 'bert':
+                loader = bert_data(max_len = self.max_len, batch_size = self.batchsize, vocab_file = self.vocab_file,
+                            category_dict = self.category_dict_10, num_workers=self.num_workers)
+                print(loader)
+            elif self.emb_type == 'w2v':
+                loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
+                        batch_size=self.batchsize, category_dict=self.category_dict_10, num_workers= self.num_workers)
+            
+        
             train_loader = loader.load_data_10(self.train_path, True)
             val_loader = loader.load_data_10(self.val_path, False)
             test_loader = loader.load_data_10(self.test_path, False)
         if self.cat_quantity == 5:
+            if self.emb_type == 'bert':
+                loader = bert_data(max_len = self.max_len, batch_size = self.batchsize, vocab_file = self.vocab_file,
+                            category_dict = self.category_dict_5, num_workers=self.num_workers)
+                print(loader)
+            elif self.emb_type == 'w2v':
+                loader = w2v_data(max_len=self.max_len, vocab_file=self.vocab_file, emb_dim = self.emb_dim,
+                        batch_size=self.batchsize, category_dict=self.category_dict_5, num_workers= self.num_workers)
+            
+        
             train_loader = loader.load_data_5(self.train_path, True)
             val_loader = loader.load_data_5(self.val_path, False)
             test_loader = loader.load_data_5(self.test_path, False)
