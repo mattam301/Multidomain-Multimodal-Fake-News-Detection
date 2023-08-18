@@ -54,7 +54,7 @@ config = {
         'fusion_type': args.fusion_type,
         'use_cuda': True,
         'with_emotion': True,
-        'cat-quantity':10,
+        'cat_quantity':10,
         'batchsize': args.batchsize,
         'max_len': args.max_len,
         'early_stop': args.early_stop,
