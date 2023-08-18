@@ -34,13 +34,7 @@ def read_pkl(path):
 
 def df_filter_10(df_data):
     list_domain = [
-            # 'DISASTERS',
-            #  'FINANCE',
-            #  'POLITICS', 
-            #  'SOCIETY',
-            #  'HEALTH'
-             
-                    "DISASTERS",
+            "DISASTERS",
             "EDUCATION", 
             "ENTERTAINMENT",
             "FINANCE",
@@ -50,7 +44,6 @@ def df_filter_10(df_data):
             "SCIENCE",
             "SOCIETY",
             "SPORTS"
-             
         ]
     df_data['in_list_domain'] = df_data.apply(lambda row: 1 if(row.category in list_domain ) else 0, axis = 1)
     df_data = df_data[df_data['in_list_domain'] == 1]
