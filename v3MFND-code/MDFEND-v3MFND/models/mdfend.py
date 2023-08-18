@@ -273,6 +273,7 @@ class Trainer():
                  bert,
                  use_cuda,
                  with_emotion,
+                 cat_quantity,
                  lr,
                  
                  dropout,
@@ -290,6 +291,7 @@ class Trainer():
 
                  ):
         self.with_emotion = with_emotion
+        self.cat_quantity = cat_quantity
         self.lr = lr
         self.weight_decay = weight_decay
         self.train_loader = train_loader
