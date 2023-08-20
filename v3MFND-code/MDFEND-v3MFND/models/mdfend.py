@@ -234,7 +234,7 @@ class MultiDomainFENDModel(torch.nn.Module):
                 shared_feature = torch.cat((shared_feature,imgs_feature , emotion ), -1) ## img + text + emotion
             
             ## fusion: mean
-            elif self.fusion_type == 'mean':
+            elif self.fusion_type == 'mean': ## 
                 # stack_vector = torch.stack([emotion,shared_feature,imgs_feature])
                 # shared_feature = torch.mean(stack_vector, dim=0)
                 
@@ -242,7 +242,7 @@ class MultiDomainFENDModel(torch.nn.Module):
                 mean_auxi = torch.mean(stack_vector_1, dim=0)
                 
                 stack_vector_2 = torch.stack([shared_feature,mean_auxi])
-                shared_feature = torch.mean([stack_vector_2,shared_feature])
+                shared_feature = torch.mean([stack_vector_2, dim=0])
 
             # ##fusion : sum
             elif self.fusion_type == 'add':
