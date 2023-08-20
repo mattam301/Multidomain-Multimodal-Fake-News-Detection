@@ -222,7 +222,6 @@ class MultiDomainFENDModel(torch.nn.Module):
                 shared_feature = torch.add(emotion ,shared_feature)
         if (self.fusion_source == 5):
             shared_feature =  self.norm_text(shared_feature)
-            #emotion = self.resize_emo(emotion)
             # Convert the 'emotion' tensor to the data type expected by self.resize_emo
             expected_dtype = self.resize_emo[0].weight.dtype
             emotion = emotion.to(expected_dtype)
@@ -236,8 +235,14 @@ class MultiDomainFENDModel(torch.nn.Module):
             
             ## fusion: mean
             elif self.fusion_type == 'mean':
-                stack_vector = torch.stack([emotion,shared_feature,imgs_feature ])
-                shared_feature = torch.mean(stack_vector, dim=0)
+                # stack_vector = torch.stack([emotion,shared_feature,imgs_feature])
+                # shared_feature = torch.mean(stack_vector, dim=0)
+                
+                stack_vector_1 = torch.stack([emotion, imgs_feature])
+                mean_auxi = torch.mean(stack_vector_1, dim=0)
+                
+                stack_vector_2 = torch.stack([shared_feature,mean_auxi])
+                shared_feature = torch.mean([stack_vector_2,shared_feature])
 
             # ##fusion : sum
             elif self.fusion_type == 'add':
@@ -277,7 +282,6 @@ class Trainer():
                  with_emotion,
                  cat_quantity,
                  lr,
-                 
                  dropout,
                  train_loader,
                  val_loader,
@@ -286,7 +290,6 @@ class Trainer():
                  weight_decay,
                  save_param_dir,
                  emb_type = 'bert', 
-                
                  loss_weight = [1, 0.006, 0.009, 5e-5],
                  early_stop = 5,
                  epoches = 100, 
