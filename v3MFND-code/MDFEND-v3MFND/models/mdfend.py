@@ -242,7 +242,7 @@ class MultiDomainFENDModel(torch.nn.Module):
                 mean_auxi = torch.mean(stack_vector_1, dim=0)
                 
                 stack_vector_2 = torch.stack([shared_feature,mean_auxi])
-                shared_feature = torch.mean([stack_vector_2, dim=0])
+                shared_feature = torch.mean(stack_vector_2, dim=0)
 
             # ##fusion : sum
             elif self.fusion_type == 'add':
