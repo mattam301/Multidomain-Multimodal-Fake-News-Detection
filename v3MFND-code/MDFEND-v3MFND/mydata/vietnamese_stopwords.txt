@@ -86,6 +86,7 @@ bạn
 anh
 chị
 cô
+họ
 ông
 bà
 đi
@@ -96,4 +97,6 @@ còn
 làm
 năm
 mình
+hơn
 url
+nói
